@@ -7,6 +7,22 @@ services:
       - "4873:4873"
     volumes:
       - ./verdaccio:/verdaccio/conf
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:8.11.3
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
   postgres:
     image: postgres:latest
     container_name: postgres_container
@@ -26,10 +42,19 @@ services:
       # - artifactory-network
     ports:
       - "8081:8081"
-    # environment:
-    #   - EXTRA_JAVA_OPTIONS=-Xms512m -Xmx2g -Xss256k -XX:+UseG1GC
+    environment:
+      - EXTRA_JAVA_OPTIONS=-Xms512m -Xmx2g -Xss256k -XX:+UseG1GC
     volumes:
-      - /path/to/system.yaml:$JFROG_HOME/artifactory/var/etc/system.yaml
+      - /path/to/system.yaml:/var/opt/artifactory/var/etc/system.yaml
+  router:
+    image: docker.bintray.io/jfrog/artifactory-router:latest
+    container_name: artifactory-router
+    ports:
+      - "8046:8046"
+    environment:
+      - ARTIFACTORY_URL=http://localhost:8081/artifactory
+    depends_on:
+      - artifactory
   nginx:
     container_name: nginx
     image: nginx:stable-alpine
