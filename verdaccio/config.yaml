@@ -10,15 +10,15 @@ uplinks:
 packages:
   "@*/*":
     access: $all
-    publish: $authenticated
+    publish: $all
     proxy: npmjs
   "@private/*":
     access: $all
-    publish: $authenticated
+    publish: $all
     proxy: myPrivate
   "**":
     access: $all
-    publish: $authenticated
+    publish: $all
     proxy: npmjs
 log:
   - { type: stdout, format: pretty, level: http }
