@@ -1,1 +1,3 @@
 verdaccio/htpassword
+elasticsearch/*
+logstash/*
